@@ -1,7 +1,5 @@
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
-import * as Three from 'three';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import ThreeEarth from "./ThreeEarth";  
 
 export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
@@ -10,11 +8,7 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
     private _container: HTMLDivElement;
     private _width: number = 0;
     private _height: number = 0;
-    private _scene: Three.Scene;
-    private _camera: Three.PerspectiveCamera;
-    private _renderer: Three.WebGLRenderer;
-    private _cube: Three.Mesh;
-    private _earth: Three.Group;
+    private _threeEarth: ThreeEarth;
 
     private _notifyOutputChanged: () => void;
 
@@ -35,9 +29,11 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
     public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container: HTMLDivElement): void {
         // Add control initialization code
         this._context = context;
-        this._context.mode.trackContainerResize(true);
         this._container = container;
         this._notifyOutputChanged = notifyOutputChanged;
+
+        // track resize changes
+        this._context.mode.trackContainerResize(true);
     }
 
     /**
@@ -49,72 +45,24 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
         this._width = context.mode.allocatedWidth;
         this._height = context.mode.allocatedHeight;
 
+        // check if the component has been initialised
         if (!this._isInitialised) {
             this._isInitialised = true;
-
-            // add the earth
-            console.log(`adding model to scene`);
-            const gltLoader = new GLTFLoader();
-            gltLoader.load('https://raw.githubusercontent.com/psycook/aishowcase/main/LowPolyEarth.glb', (gltf) => {
-
-                // create the scene
-                this._scene = new Three.Scene();
-                this._camera = new Three.PerspectiveCamera(50, (this._width / this._height), 0.1, 1000);
-                this._camera.position.set(0, 0, 5);
-                this._renderer = new Three.WebGLRenderer({ alpha: false, antialias: true });
-                this._renderer.setSize(this._width, this._height, false);
-                //this._renderer.setPixelRatio(window.devicePixelRatio);
-                this._renderer.toneMapping = Three.ACESFilmicToneMapping;
-                this._renderer.outputColorSpace = Three.SRGBColorSpace;
-
-                //add orbit controls
-                const controls = new OrbitControls(this._camera, this._renderer.domElement)
-                controls.enableDamping = true;
-                controls.dampingFactor = 0.25;
-                controls.enableZoom = true;
-                controls.zoomSpeed = 0.25;
-
-                // add ambient lightning
-                const ambientLight = new Three.AmbientLight(0xffffff, 1.0);
-                this._scene.add(ambientLight);
-
-                // add a point light
-                const pointLight = new Three.PointLight();
-                pointLight.position.set(-2, 2, 2);
-                pointLight.intensity = 10.0;
-                this._scene.add(pointLight);
-
-                // add the model to the scene
-                this._earth = gltf.scene;
-
-                // display the node details in the scene
-                this._earth.traverse((o:Three.Object3D) => 
-                    {
-                        console.log(`Type is ${o.type}, it's name is ${o.name}, size is ${JSON.stringify(o.scale)}, position is ${JSON.stringify(o.position)}`);
-                    }
-                );
-                this._earth.position.set(0, 0, 0);
-                this._scene.add(this._earth);
-
-                // add to the container
-                this._container.appendChild(this._renderer.domElement);
-
-                // call animate
-                this.animate();
-            }
-            )
+            this._container.style.width = this._width + "px";
+            this._container.style.height = this._height + "px";
+            this._threeEarth = new ThreeEarth(
+                this._container, 
+                this._width, 
+                this._height, 
+                `https://raw.githubusercontent.com/psycook/aishowcase/main/LowPolyEarth.glb`
+            );
         } else {
             // update the size of the component
-            this._camera.aspect = (this._width / this._height);
-            this._camera.updateProjectionMatrix();
-            this._renderer.setSize(this._width, this._height, false);
+            if(this._threeEarth)
+            {
+                this._threeEarth.update(this._width, this._height);
+            }
         }
-    }
-
-    public animate() {
-        requestAnimationFrame(this.animate.bind(this));
-        this._earth.rotation.y -= 0.005;
-        this._renderer.render(this._scene, this._camera);
     }
 
     /**
@@ -132,4 +80,106 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
     public destroy(): void {
         // Add code to cleanup control if necessary
     }
+
+    // test data - delete this
+    private  testData1 ={
+        "markers": [
+          {
+            "longitude": -0.1278,
+            "latitude": 51.5074,
+            "name": "London"
+          },
+          {
+            "longitude": 2.3522,
+            "latitude": 48.8566,
+            "name": "Paris"
+          },
+          {
+            "longitude": 13.4050,
+            "latitude": 52.5200,
+            "name": "Berlin"
+          },
+          {
+            "longitude": 4.8952,
+            "latitude": 52.3702,
+            "name": "Amsterdam"
+          },
+          {
+            "longitude": 12.4964,
+            "latitude": 41.9028,
+            "name": "Rome"
+          },
+          {
+            "longitude": 2.1734,
+            "latitude": 41.3851,
+            "name": "Barcelona"
+          },
+          {
+            "longitude": 16.3738,
+            "latitude": 48.2082,
+            "name": "Vienna"
+          },
+          {
+            "longitude": 18.0686,
+            "latitude": 59.3293,
+            "name": "Stockholm"
+          },
+          {
+            "longitude": -74.0060,
+            "latitude": 40.7128,
+            "name": "New York"
+          }
+        ]
+      };
+
+      private  testData2 = {
+        "markers": [
+          {
+            "longitude": 121.4740,
+            "latitude": 31.2304,
+            "name": "Shanghai"
+          },
+          {
+            "longitude": 139.6917,
+            "latitude": 35.6895,
+            "name": "Tokyo"
+          },
+          {
+            "longitude": -58.3816,
+            "latitude": -34.6037,
+            "name": "Buenos Aires"
+          },
+          {
+            "longitude": 151.2093,
+            "latitude": -33.8688,
+            "name": "Sydney"
+          },
+          {
+            "longitude": 72.8777,
+            "latitude": 19.0760,
+            "name": "Mumbai"
+          },
+          {
+            "longitude": -43.1729,
+            "latitude": -22.9068,
+            "name": "Rio de Janeiro"
+          },
+          {
+            "longitude": 31.2357,
+            "latitude": 30.0444,
+            "name": "Cairo"
+          },
+          {
+            "longitude": 126.9780,
+            "latitude": 37.5665,
+            "name": "Seoul"
+          },
+          {
+            "longitude": -0.1257,
+            "latitude": 51.5085,
+            "name": "London"
+          }
+        ]
+      };
+      
 }
