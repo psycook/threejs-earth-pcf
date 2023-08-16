@@ -28,10 +28,6 @@ export default class ThreeEarth {
 
     private loadMapMarker() {
         this._gltLoader.load(MARKER_URL, (gltf) => {
-            gltf.scene.traverse( (obj) => {
-                console.log(`name is ${obj.name}, type is ${obj.type}`)
-            });
-
             this._mapMarker = gltf.scene.getObjectByName("MapMarker") as Three.Mesh;
         });
     }
