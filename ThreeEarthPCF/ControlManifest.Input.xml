@@ -12,8 +12,10 @@
 
     <resources>
       <code path="index.ts" order="1"/>
+      <css path="css/font-awesome.min.css" order="1" />
       <img path="models/LowPolyEarth.glb"/>
       <img path="models/MapMarker.glb"/>
+      <img path="models/MapMarker2.glb"/>
 
       <!-- UNCOMMENT TO ADD MORE RESOURCES
       <css path="css/ThreeEarthPCF.css" order="1" />

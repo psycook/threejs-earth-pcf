@@ -13,7 +13,7 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
   private _notifyOutputChanged: () => void;
 
   // these should be set in the manifest
-  private _markerMeshURL = `models/MapMarker.glb`;
+  private _markerMeshURL = `models/MapMarker2.glb`;
   private _sceneMeshURL = `models/LowPolyEarth.glb`;
   //private _markerMeshURL = `https://raw.githubusercontent.com/psycook/aishowcase/main/MapMarker.glb`;
   //private _sceneMeshURL = `https://raw.githubusercontent.com/psycook/aishowcase/main/LowPolyEarth.glb`;

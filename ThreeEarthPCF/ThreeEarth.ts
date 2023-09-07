@@ -92,21 +92,13 @@ export default class ThreeEarth {
 
         // add the model to the scene
         this._earthMesh = earthMesh;
-
-        // set the name of the mesh
-        // this._earthMesh.traverse((child) => {
-        //     if(child instanceof Three.Mesh) {
-        //         child.receiveShadow = true;
-        //     }
-        // });
-
-
         this._earthMesh.name = EARTH_MESH_NAME;
         this._earthMesh.position.set(0, 0, 0);
         this._scene.add(this._earthMesh);
 
         // create the mesh marker helper
         this._mapMarkerHelper = new MapMarkerHelper(this._markerMeshURL, () => {
+            // add the markers to the scene
             this.setMarkersUsingJSON(this._markersJSON);
         });
 
