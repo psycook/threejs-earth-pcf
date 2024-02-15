@@ -1,3 +1,4 @@
+import { networkInterfaces } from "os";
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import ThreeEarth from "./ThreeEarth";
 
@@ -13,11 +14,11 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
   private _notifyOutputChanged: () => void;
 
   // these should be set in the manifest
-  private _markerMeshURL = `models/MapMarker2.glb`;
-  private _sceneMeshURL = `models/LowPolyEarth.glb`;
-  //private _markerMeshURL = `https://raw.githubusercontent.com/psycook/aishowcase/main/MapMarker.glb`;
+  //private _markerMeshURL = `models/MapMarker2.glb`;
+  //private _sceneMeshURL = `models/LowPolyEarth.glb`;
+  private _markerMeshURL = `https://raw.githubusercontent.com/psycook/aishowcase/main/MapMarker2.glb`;
   //private _sceneMeshURL = `https://raw.githubusercontent.com/psycook/aishowcase/main/LowPolyEarth.glb`;
-  //private _markersJSON = `[ { "lon": -73.935242, "lat": 40.730610, "name": "New York" }, { "lon": 2.352222, "lat": 48.856614, "name": "Paris" }, { "lon": 13.4050, "lat": 52.5200, "name": "Berlin" }, { "lon": 139.6917, "lat": 35.6895, "name": "Tokyo" }, { "lon": -46.633308, "lat": -23.550520, "name": "São Paulo" }, { "lon": 121.4737, "lat": 31.2304, "name": "Shanghai" }, { "lon": 77.2090, "lat": 28.6139, "name": "New Delhi" }, { "lon": 37.6173, "lat": 55.7558, "name": "Moscow" }, { "lon": -3.7038, "lat": 40.4168, "name": "Madrid" } ]`;
+  private _sceneMeshURL = 'https://raw.githubusercontent.com/psycook/aishowcase/main/earth.glb';
 
   constructor() {
   }
@@ -55,6 +56,9 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
     const newAutoRotate = context.parameters.autoRotate.raw as boolean;
     const newRotationSpeed = context.parameters.rotationSpeed.raw as number;
     const markersJSON = context.parameters.markersJSON.raw as string;
+    const newCameraDistance = context.parameters.cameraDistance.raw as number;
+    const newMarkersScale = context.parameters.markersScale.raw as number;
+    const newMarkersRadius = context.parameters.markersRadius.raw as number;
 
     // check if the component has been initialised
     if (!this._isInitialised) {
@@ -74,7 +78,9 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
         newRotationSpeed, 
         this._sceneMeshURL, 
         this._markerMeshURL, 
-        markersJSON);
+        markersJSON,
+        newMarkersScale,
+        newMarkersRadius);
     } else {
       // update the size of the component
       if (this._threeEarth) {
@@ -84,6 +90,9 @@ export class ThreeEarthPCF implements ComponentFramework.StandardControl<IInputs
         // update the auto rotate and rotation speed
         this._threeEarth.setAutoRotate(newAutoRotate);
         this._threeEarth.setRotationSpeed(newRotationSpeed);
+        this._threeEarth.setCameraDistance(newCameraDistance);
+        this._threeEarth.setMarkersScale(newMarkersScale);
+        this._threeEarth.setMarkersRadius(newMarkersRadius);
 
         // update the markers
         if(this.isValidJson(markersJSON)) {

@@ -8,14 +8,17 @@
     <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
     <property name="rotationSpeed" display-name-key="Rotation Speed" description-key="The speed of the rotation if enabled" of-type="Decimal" usage="input" default-value="0.001" required="true" />
     <property name="autoRotate" display-name-key="Auto Rotate" description-key="Is auto rotation enabled" of-type="TwoOptions" usage="input" default-value="0" required="true" />
+    <property name="cameraDistance" display-name-key="Camera Distance" description-key="The initial distance of the camera from the model" of-type="Decimal" usage="input" default-value="2.75" required="true" />
+    <property name="markersScale" display-name-key="Marker Scale" description-key="The scale of the 3d map markers" of-type="Decimal" usage="input" default-value="0.05" required="true" />
+    <property name="markersRadius" display-name-key="Marker Radius" description-key="The radius (distance from center) of the 3d map markers" of-type="Decimal" usage="input" default-value="1.125" required="true" />
     <property name="markersJSON" display-name-key="Markers JSON" description-key="Map markers in json format" of-type="Multiple" usage="input" default-value="[]" required="true" />
 
     <resources>
       <code path="index.ts" order="1"/>
       <css path="css/font-awesome.min.css" order="1" />
-      <img path="models/LowPolyEarth.glb"/>
+      <!--<img path="models/LowPolyEarth.glb"/>
       <img path="models/MapMarker.glb"/>
-      <img path="models/MapMarker2.glb"/>
+      <img path="models/MapMarker2.glb"/>-->
 
       <!-- UNCOMMENT TO ADD MORE RESOURCES
       <css path="css/ThreeEarthPCF.css" order="1" />

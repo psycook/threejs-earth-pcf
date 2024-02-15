@@ -18,10 +18,13 @@ export default class ThreeEarth {
     private _mapMarkerHelper: MapMarkerHelper;
     private _autoRotate: boolean = false;
     private _rotateSpeed: number = 0.01;
+    private _cameraDistance: number = 2.75;
     private _markersJSON: string;
+    private _markersScale: number;
+    private _markersRadius: number;
 
     // the constructor takes an HTMLElement to attach the canvas to
-    constructor(container: HTMLElement, width: number, height: number, autoRotate: boolean, rotateSpeed: number, sceneURL: string, markerMeshURL: string, markersJSON: string) {
+    constructor(container: HTMLElement, width: number, height: number, autoRotate: boolean, rotateSpeed: number, sceneURL: string, markerMeshURL: string, markersJSON: string, markersScale: number, markersRadius: number) {
         this._container = container;
         this._width = width;
         this._height = height;
@@ -30,6 +33,8 @@ export default class ThreeEarth {
         this._sceneURL = sceneURL;
         this._markerMeshURL = markerMeshURL;
         this._markersJSON = markersJSON;
+        this._markersScale = markersScale;
+        this._markersRadius = markersRadius;
         this.init();
     }
 
@@ -42,7 +47,7 @@ export default class ThreeEarth {
         // create the scene
         this._scene = new Three.Scene();
         this._camera = new Three.PerspectiveCamera(50, (this._width / this._height), 0.1, 1000);
-        this._camera.position.set(0, 0, 5);
+        this._camera.position.set(0, 0, this._cameraDistance);
         this._renderer = new Three.WebGLRenderer({ alpha: true, antialias: true });
         this._renderer.setSize(this._width, this._height, false);
         this._renderer.toneMapping = Three.ACESFilmicToneMapping;
@@ -125,7 +130,7 @@ export default class ThreeEarth {
      * */ 
     public setMarkersUsingJSON(markersJSON: string) {
         // creating the group
-        const markers = this._mapMarkerHelper.createMarkersFromJSON(markersJSON, this._earthMesh.position);
+        const markers = this._mapMarkerHelper.createMarkersFromJSON(markersJSON, this._earthMesh.position, this._markersRadius, this._markersScale);
 
         // remove the existing makers from the scene
         const markersGroup = this._earthMesh.getObjectByName(MARKERS_GROUP_NAME);
@@ -160,7 +165,6 @@ export default class ThreeEarth {
         this._rotateSpeed = newValue;
     }
 
-
     /**
      * 
      * Update the value of the autorotation
@@ -169,6 +173,27 @@ export default class ThreeEarth {
      */
     public setAutoRotate(newValue: boolean) {
         this._autoRotate = newValue;
+    }
+
+    /**
+     * set the distance of the camera from the model
+     * 
+     * @param newValue - the new distance of the camera from the earth
+     */
+    public setCameraDistance(newValue: number) {
+        this._cameraDistance = newValue;
+        if(this._camera) {
+            this._camera.position.set(0, 0, this._cameraDistance);
+        }
+    }
+
+
+    public setMarkersScale(newValue: number) {
+        this._markersScale = newValue;
+    }
+
+    public setMarkersRadius(newValue: number) {
+        this._markersRadius = newValue;
     }
 
 }
